@@ -382,7 +382,12 @@ static size_t build_attr_requests(protocol::AttributeRequest *reqs, size_t max_r
     if (n >= max_reqs)
       break;
     reqs[n].id = id;
-    reqs[n].max_len = protocol::attribute_has_max_len(id) ? 64 : 0;
+    if (!protocol::attribute_has_max_len(id))
+      reqs[n].max_len = 0;
+    else if (id == protocol::AttributeId::MESSAGE)
+      reqs[n].max_len = 250;  // langere berichttekst (ANCS_ATTR_BUF_SIZE = 512 totaal)
+    else
+      reqs[n].max_len = 64;
     n++;
   }
   return n;

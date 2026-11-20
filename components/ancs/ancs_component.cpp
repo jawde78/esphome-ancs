@@ -151,8 +151,10 @@ void AncsComponent::publish_advertised_name_() {
 #endif
 
 std::string AncsComponent::resolve_name() const {
-  // get_mac_address() returns 12 lowercase hex chars (no separators).
-  std::string mac6 = get_mac_address();
+  // ESPHome 2026.11 removed get_mac_address(); use the buffer variant.
+  char mac_buf[MAC_ADDRESS_BUFFER_SIZE];
+  get_mac_address_into_buffer(mac_buf);
+  std::string mac6(mac_buf);
   if (mac6.size() > 6)
     mac6 = mac6.substr(mac6.size() - 6);
   return resolve_ble_name(base_name_, name_configured_, App.get_name(), mac6, name_suffix_);
